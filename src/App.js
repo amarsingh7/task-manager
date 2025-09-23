@@ -160,11 +160,12 @@ const Header = memo(() => {
   const { taskStats } = useTasks();
 
   return (
-    <header className="mb-8 text-center">
+    <header className="mb-10 text-center">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+        <h1 className="text-3xl md:text-5xl font-bold pb-2 bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 bg-clip-text text-transparent">
           Task Manager
         </h1>
+
         <button
           onClick={toggleTheme}
           className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-105"
@@ -174,9 +175,9 @@ const Header = memo(() => {
         </button>
       </div>
       <div className="flex justify-center mt-8 gap-4 text-sm text-gray-600 dark:text-gray-400">
-        <span>Total: {taskStats.total}</span>
-        <span>Completed: {taskStats.completed}</span>
-        <span>Pending: {taskStats.pending}</span>
+        <span className="font-bold text-lg">Total: {taskStats.total}</span>
+        <span className="font-bold text-lg">Completed: {taskStats.completed}</span>
+        <span className="font-bold text-lg">Pending: {taskStats.pending}</span>
       </div>
     </header>
   );
@@ -303,7 +304,7 @@ const TaskFilter = memo(() => {
 });
 
 //  Custom HTML5 drag-and-drop implementation for task reordering
-//  ANIMATIONS: CSS transitions for adding/removing tasks
+//  CSS transitions for adding/removing tasks (animations)
 const TaskItem = memo(({ task, index, onDrop }) => {
   const { toggleTask, deleteTask } = useTasks();
   const [isDragging, setIsDragging] = useState(false);
@@ -394,12 +395,12 @@ const TaskItem = memo(({ task, index, onDrop }) => {
   );
 });
 
-// Task List Component
+// task list component
 const TaskList = memo(() => {
   const { filteredTasks, reorderTasks, tasks } = useTasks();
 
   const handleDrop = useCallback((dragIndex, dropIndex) => {
-    // Find the actual indices in the full tasks array
+    // find the actual indices in the full tasks array
     const dragTask = filteredTasks[dragIndex];
     const dropTask = filteredTasks[dropIndex];
     
@@ -449,8 +450,8 @@ const App = () => {
             <TaskList />
           </div>
         </div>
-        
-        {/*  ANIMATIONS: slideIn animation for new tasks */}
+
+        {/* slideIn animation for new tasks (animation) */}
         <style jsx global>{`
           @keyframes slideIn {
             from {
