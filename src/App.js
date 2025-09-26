@@ -26,11 +26,11 @@ const useLocalStorage = (key, initialValue) => {
   return [storedValue, setValue];
 };
 
-//  React Context instead of prop drilling to manage task data (context api)
+// React Context instead of prop drilling to manage task data (context api)
 const TaskContext = createContext();
 const ThemeContext = createContext();
 
-//  Toggle with dark/light mode with localStorage persistence
+// Toggle with dark/light mode with localStorage persistence
 const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useLocalStorage('darkMode', false);
 
@@ -59,7 +59,6 @@ const TaskProvider = ({ children }) => {
 
   // add tasks with validation
   const addTask = useCallback((text) => {
-    // prevent users from adding empty tasks (form validation)
     if (text.trim() === '') return false;
     
     const newTask = {
@@ -73,19 +72,19 @@ const TaskProvider = ({ children }) => {
     return true;
   }, [setTasks]);
 
-  //  mark tasks as completed
+  // mark tasks as completed
   const toggleTask = useCallback((id) => {
     setTasks(prev => prev.map(task => 
       task.id === id ? { ...task, completed: !task.completed } : task
     ));
   }, [setTasks]);
 
-  //  delete tasks
+  // delete tasks
   const deleteTask = useCallback((id) => {
     setTasks(prev => prev.filter(task => task.id !== id));
   }, [setTasks]);
 
-  //  task reordering functionality
+  // task reordering functionality
   const reorderTasks = useCallback((dragIndex, hoverIndex) => {
     setTasks(prev => {
       const dragTask = prev[dragIndex];
@@ -96,8 +95,12 @@ const TaskProvider = ({ children }) => {
     });
   }, [setTasks]);
 
-  //  Filter tasks (All, Completed, Pending)
-  //  useMemo to prevent unnecessary re-renders (performance optimization)
+  // ✅ new: mark all pending tasks as completed
+  const markAllCompleted = useCallback(() => {
+    setTasks(prev => prev.map(task => ({ ...task, completed: true })));
+  }, [setTasks]);
+
+  // Filter tasks
   const filteredTasks = useMemo(() => {
     switch (filter) {
       case 'completed':
@@ -109,14 +112,13 @@ const TaskProvider = ({ children }) => {
     }
   }, [tasks, filter]);
 
-  //  useMemo for task statistics (performance optimization)
+  // task statistics
   const taskStats = useMemo(() => ({
     total: tasks.length,
     completed: tasks.filter(task => task.completed).length,
     pending: tasks.filter(task => !task.completed).length
   }), [tasks]);
 
-  //  useMemo for context value to prevent unnecessary re-renders (performance optimization)
   const contextValue = useMemo(() => ({
     tasks,
     filteredTasks,
@@ -126,8 +128,9 @@ const TaskProvider = ({ children }) => {
     toggleTask,
     deleteTask,
     setFilter,
-    reorderTasks
-  }), [tasks, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks]);
+    reorderTasks,
+    markAllCompleted, // ✅ expose new function
+  }), [tasks, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted]);
 
   return (
     <TaskContext.Provider value={contextValue}>
@@ -139,25 +142,20 @@ const TaskProvider = ({ children }) => {
 // custom hooks to use contexts
 const useTheme = () => {
   const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
   return context;
 };
 
 const useTasks = () => {
   const context = useContext(TaskContext);
-  if (!context) {
-    throw new Error('useTasks must be used within a TaskProvider');
-  }
+  if (!context) throw new Error('useTasks must be used within a TaskProvider');
   return context;
 };
 
-//  React.memo to prevent unnecessary re-renders (performance optimization)
-//  Mobile-first approach with responsive classes (responsive design)
+// Header
 const Header = memo(() => {
   const { isDark, toggleTheme } = useTheme();
-  const { taskStats } = useTasks();
+  const { taskStats, markAllCompleted } = useTasks(); // ✅ use new function
 
   return (
     <header className="mb-10 text-center">
@@ -174,11 +172,24 @@ const Header = memo(() => {
           {isDark ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
+
       <div className="flex justify-center mt-8 gap-4 text-sm text-gray-600 dark:text-gray-400">
         <span className="font-bold text-lg">Total: {taskStats.total}</span>
         <span className="font-bold text-lg">Completed: {taskStats.completed}</span>
         <span className="font-bold text-lg">Pending: {taskStats.pending}</span>
       </div>
+
+      {/* ✅ New Button */}
+      {taskStats.pending > 0 && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={markAllCompleted}
+            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-all duration-200 hover:scale-105"
+          >
+            Mark All as Done
+          </button>
+        </div>
+      )}
     </header>
   );
 });
@@ -349,6 +360,7 @@ const TaskItem = memo(({ task, index, onDrop }) => {
   }, [index, onDrop]);
 
   return (
+  
     <div
       ref={dragRef}
       draggable
