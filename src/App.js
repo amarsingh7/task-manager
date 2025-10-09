@@ -100,6 +100,12 @@ const TaskProvider = ({ children }) => {
     setTasks(prev => prev.map(task => ({ ...task, completed: true })));
   }, [setTasks]);
 
+  // ✅ new: delete all pending tasks
+  const deletependingTasks = useCallback(() => {
+    setTasks(prev => prev.filter(task => task.completed));
+  }, [setTasks]);
+  
+
   // Filter tasks
   const filteredTasks = useMemo(() => {
     switch (filter) {
@@ -129,7 +135,8 @@ const TaskProvider = ({ children }) => {
     deleteTask,
     setFilter,
     reorderTasks,
-    markAllCompleted, // ✅ expose new function
+    markAllCompleted, 
+    deletependingTasks,// ✅ expose new function
   }), [tasks, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted]);
 
   return (
@@ -148,6 +155,7 @@ const useTheme = () => {
 
 const useTasks = () => {
   const context = useContext(TaskContext);
+  console.log("The context is ",context.tasks);
   if (!context) throw new Error('useTasks must be used within a TaskProvider');
   return context;
 };
@@ -156,7 +164,7 @@ const useTasks = () => {
 const Header = memo(() => {
   const { isDark, toggleTheme } = useTheme();
   const { taskStats, markAllCompleted } = useTasks(); // ✅ use new function
-
+  const { deletependingTasks } = useTasks();
   return (
     <header className="mb-10 text-center">
       <div className="flex justify-between items-center mb-4">
@@ -181,14 +189,22 @@ const Header = memo(() => {
 
       {/* ✅ New Button */}
       {taskStats.pending > 0 && (
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={markAllCompleted}
-            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-all duration-200 hover:scale-105"
-          >
-            Mark All as Done
-          </button>
-        </div>
+     <div className="flex justify-center gap-6 mt-6">
+  <button
+    onClick={markAllCompleted}
+    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
+  >
+    ✅ Mark All as Done
+  </button>
+
+  <button
+    onClick={deletependingTasks}
+    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
+  >
+    🗑️ Delete Pending Tasks
+  </button>
+</div>
+
       )}
     </header>
   );
