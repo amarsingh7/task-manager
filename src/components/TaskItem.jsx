@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { GripVertical, Trash2 } from 'lucide-react';
+import { GripVertical, Trash2, Edit } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 
 const TaskItem = ({ task, index, onDrop }) => {
-  const { toggleTask, deleteTask } = useTasks();
+  const { toggleTask, deleteTask, setEditTask } = useTasks();
   const [isDragging, setIsDragging] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -41,6 +41,15 @@ const TaskItem = ({ task, index, onDrop }) => {
         <span className={`flex-1 ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900 dark:text-gray-100'}`}>
           {task.text}
         </span>
+        <button
+          onClick={() => {
+            console.log(task);
+            setEditTask(task);
+          }}
+          className="opacity-0 group-hover:opacity-100 p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200 hover:scale-110"
+        >
+          <Edit size={16} />
+        </button>
         <button
           onClick={() => deleteTask(task.id)}
           className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 hover:scale-110"

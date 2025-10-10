@@ -6,6 +6,7 @@ const TaskContext = createContext();
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useLocalStorage('tasks', []);
   const [filter, setFilter] = useState('all');
+  const [editTask, setEditTask] = useState(null);
 
   const addTask = useCallback((text) => {
     if (text.trim() === '') return false;
@@ -18,6 +19,15 @@ export const TaskProvider = ({ children }) => {
     setTasks(prev => [...prev, newTask]);
     return true;
   }, [setTasks]);
+
+  const editTaskText = useCallback((id, newText) => {
+    if (newText.trim() === '') return false;
+    const existingTask = tasks.find(t => t.id === id);
+    if (!existingTask) return false;
+    const edittedTask = { ...existingTask, text: newText.trim() };
+    setTasks(prev => prev.map(task => task.id === id ? edittedTask : task));
+    return true;
+  }, [setTasks, tasks]);
 
   const toggleTask = useCallback((id) => {
     setTasks(prev => prev.map(task => task.id === id ? { ...task, completed: !task.completed } : task));
@@ -56,9 +66,9 @@ export const TaskProvider = ({ children }) => {
   }), [tasks]);
 
   const contextValue = useMemo(() => ({
-    tasks, filteredTasks, filter, taskStats,
-    addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks
-  }), [tasks, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks]);
+    tasks, filteredTasks, filter, taskStats, editTask,
+    addTask, editTaskText, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, setEditTask
+  }), [tasks, editTask,editTaskText, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, setEditTask]);
 
   return <TaskContext.Provider value={contextValue}>{children}</TaskContext.Provider>;
 };
