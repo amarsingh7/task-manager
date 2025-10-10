@@ -3,7 +3,7 @@ import { useTasks } from '../context/TaskContext';
 import TaskItem from './TaskItem';
 
 const TaskList = () => {
-  const { filteredTasks, reorderTasks, tasks } = useTasks();
+  const { filteredTasks, reorderTasks, tasks, searchTerm, filter } = useTasks();
 
   const handleDrop = useCallback((dragIndex, dropIndex) => {
     const dragTask = filteredTasks[dragIndex];
@@ -14,7 +14,16 @@ const TaskList = () => {
   }, [filteredTasks, tasks, reorderTasks]);
 
   if (filteredTasks.length === 0)
-    return <div className="text-center text-gray-500 dark:text-gray-400 py-10">No tasks yet — add one!</div>;
+    return <div className="text-center text-gray-500 dark:text-gray-400 py-10">
+      {
+        searchTerm ? <span>No tasks match for search <span className='font-bold'>'{searchTerm}'</span>. </span> :
+            filter === 'completed' ? 'No completed tasks.' :
+            filter === 'pending' ? 'No pending tasks.' :
+            'No tasks available. Add a new task to get started!'
+      }
+    </div>;
+
+  console.log(">>", searchTerm)
 
   return (
     <div className="space-y-3">
