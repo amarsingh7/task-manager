@@ -8,7 +8,7 @@ const Navbar = memo(() => {
   const { taskStats, markAllCompleted, tasks, setTasks } = useTasks();
 
   const removePendingTasks = useCallback(() => {
-    const hasPending = tasks.some(t => !t.completed);
+    const hasPending = tasks.some(task => !task.completed);
     if (!hasPending) return alert('No pending tasks to remove!');
     if (window.confirm('Are you sure you want to remove all pending tasks?')) {
       setTasks(prev => prev.filter(task => task.completed));
