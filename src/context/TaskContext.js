@@ -69,7 +69,7 @@ export const TaskProvider = ({ children }) => {
   const contextValue = useMemo(() => ({
     tasks, filteredTasks, filter, taskStats, searchTerm, editTask,
     addTask, editTaskText, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, setEditTask, setSearchTerm
-  }), [tasks, editTask,editTaskText, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, setEditTask]);
+  }), [tasks, editTask, editTaskText, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, setEditTask, searchTerm, setSearchTerm]);
   
   return <TaskContext.Provider value={contextValue}>{children}</TaskContext.Provider>;
 };
