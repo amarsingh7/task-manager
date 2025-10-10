@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Check, Plus } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Plus } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 
 const TaskForm = () => {

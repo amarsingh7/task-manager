@@ -5,6 +5,7 @@ const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useLocalStorage('tasks', []);
+  const [searchTerm, setSearchTerm] = useState(''); 
   const [filter, setFilter] = useState('all');
 
   const addTask = useCallback((text) => {
@@ -43,11 +44,11 @@ export const TaskProvider = ({ children }) => {
 
   const filteredTasks = useMemo(() => {
     switch (filter) {
-      case 'completed': return tasks.filter(t => t.completed);
-      case 'pending': return tasks.filter(t => !t.completed);
-      default: return tasks;
+      case 'completed': return tasks.filter(t => t.completed && t.text.toLowerCase().includes(searchTerm));
+      case 'pending': return tasks.filter(t => !t.completed && t.text.toLowerCase().includes(searchTerm));
+      default: return tasks.filter(t => t.text.toLowerCase().includes(searchTerm));
     }
-  }, [tasks, filter]);
+  }, [tasks, filter, searchTerm]);
 
   const taskStats = useMemo(() => ({
     total: tasks.length,
@@ -56,9 +57,9 @@ export const TaskProvider = ({ children }) => {
   }), [tasks]);
 
   const contextValue = useMemo(() => ({
-    tasks, filteredTasks, filter, taskStats,
-    addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks
-  }), [tasks, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks]);
+    tasks, filteredTasks, filter, taskStats, searchTerm, 
+    addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, setSearchTerm,
+  }), [tasks, filteredTasks, filter, taskStats, addTask, toggleTask, deleteTask, setFilter, reorderTasks, markAllCompleted, setTasks, searchTerm, setSearchTerm]);
 
   return <TaskContext.Provider value={contextValue}>{children}</TaskContext.Provider>;
 };
