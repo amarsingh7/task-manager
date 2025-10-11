@@ -32,7 +32,8 @@ const TaskItem = ({ task, index, onDrop }) => {
   }
 
   return (
-    <div
+    <>
+      <div
       draggable
       onDragStart={handleDragStart}
       onDragEnd={() => setIsDragging(false)}
@@ -67,7 +68,8 @@ const TaskItem = ({ task, index, onDrop }) => {
           <Trash2 size={16} />
         </button>
       </div>
-      <ConfirmDialog 
+    </div>
+    <ConfirmDialog 
         title="Confirm Deletion"
         message={
           <p>
@@ -79,7 +81,7 @@ const TaskItem = ({ task, index, onDrop }) => {
         onCancel={onCancelDelete}
         isOpen={confirmDeleteToggle}
       />
-    </div>
+    </>
   );
 };
 
