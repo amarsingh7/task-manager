@@ -26,7 +26,7 @@ const TaskList = () => {
   console.log(">>", searchTerm)
 
   return (
-    <div className="space-y-3">
+    <div>
       {filteredTasks.map((task, index) => (
         <TaskItem key={task.id} task={task} index={index} onDrop={handleDrop} />
       ))}
