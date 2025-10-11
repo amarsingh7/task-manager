@@ -22,7 +22,7 @@ const TaskItem = ({ task, index, onDrop }) => {
     setIsDragOver(false);
   };
 
-  const ononfirmDelete = () => {
+  const onConfirmDelete = () => {
     deleteTask(task.id);
     setConfirmDeleteToggle(false);
   }
@@ -75,7 +75,7 @@ const TaskItem = ({ task, index, onDrop }) => {
             <span  className='block font-bold mt-3'>{task.text}</span>
           </p>
         }
-        onConfirm={ononfirmDelete}
+        onConfirm={onConfirmDelete}
         onCancel={onCancelDelete}
         isOpen={confirmDeleteToggle}
       />
