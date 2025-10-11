@@ -17,7 +17,7 @@ const TaskList = () => {
     return <div className="text-center text-gray-500 dark:text-gray-400 py-10">No tasks yet — add one!</div>;
 
   return (
-    <div className="space-y-3">
+    <div>
       {filteredTasks.map((task, index) => (
         <TaskItem key={task.id} task={task} index={index} onDrop={handleDrop} />
       ))}
